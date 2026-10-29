@@ -628,3 +628,33 @@ if '</body>' in s and 'function themeInventory()' not in s:
     s=s.replace('</body>', pouch_inventory_script + '\\n</body>',1)
 p.write_text(s, encoding='utf-8')
 print("Applied Adventurer's Pouch visual theme to the existing game inventory without replacing inventory data.")
+
+
+# Compact bottom-sheet crafting layout; keep backpack styling unchanged.
+compact_craft_css = r"""
+.modalwrap:has(.rgrid){align-items:flex-end!important;justify-content:center!important;padding:6px!important}
+.modalwrap:has(.rgrid) .modal{width:min(650px,95vw)!important;max-height:56dvh!important;height:auto!important;margin:0 auto!important;overflow:hidden!important;border-radius:13px 13px 8px 8px!important}
+.modalwrap:has(.rgrid) .mhead{min-height:42px!important;padding:5px 9px!important}
+.modalwrap:has(.rgrid) .mhead h2{font-size:clamp(16px,4.4vw,20px)!important;line-height:1.15!important}
+.modalwrap:has(.rgrid) #mclose{width:34px!important;min-width:34px!important;height:34px!important;flex:0 0 34px!important;font-size:0!important}
+.modalwrap:has(.rgrid) #mclose:after{content:"×"!important;font:900 28px/28px Arial,sans-serif!important}
+.modalwrap:has(.rgrid) #mbody{max-height:calc(56dvh - 46px)!important;overflow:auto!important;padding:7px!important}
+.modalwrap:has(.rgrid) .rgrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+.modalwrap:has(.rgrid) .rcp{min-width:0!important;padding:5px!important;font-size:11px!important;line-height:1.2!important}
+.modalwrap:has(.rgrid) .recipe-detail{grid-column:1/-1!important;grid-row:auto!important;position:static!important;inset:auto!important;width:100%!important;max-height:none!important;overflow:visible!important;margin:2px 0 0!important;padding:8px!important;box-sizing:border-box!important}
+.modalwrap:has(.rgrid) .recipe-detail .big img{width:34px!important;height:34px!important;object-fit:contain!important}
+.modalwrap:has(.rgrid) .recipe-detail .txt{font-size:12px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+.modalwrap:has(.rgrid) .ingredients{display:flex!important;flex-direction:column!important;gap:4px!important;width:100%!important}
+.modalwrap:has(.rgrid) .ingredient{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important;width:100%!important;min-width:0!important;padding:5px 7px!important;font-size:12px!important;line-height:1.2!important;box-sizing:border-box!important}
+.modalwrap:has(.rgrid) .ingredient span{min-width:0!important;flex:1 1 auto!important;overflow-wrap:anywhere!important}
+.modalwrap:has(.rgrid) .ingredient b{flex:0 0 auto!important;white-space:nowrap!important;font-size:12px!important}
+.modalwrap:has(.rgrid) .recipe-detail button{min-height:39px!important;padding:6px 8px!important;font-size:13px!important}
+@media(max-width:430px){.modalwrap:has(.rgrid) .modal{max-height:53dvh!important}.modalwrap:has(.rgrid) #mbody{max-height:calc(53dvh - 46px)!important}.modalwrap:has(.rgrid) .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.modalwrap:has(.rgrid) .recipe-detail{grid-column:1/-1!important;grid-row:auto!important}}
+@media(max-height:430px){.modalwrap:has(.rgrid) .modal{max-height:68dvh!important}.modalwrap:has(.rgrid) #mbody{max-height:calc(68dvh - 46px)!important}}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', compact_craft_css + '\\n</style>', 1)
+else:
+    print("WARNING: style tag not found; compact crafting CSS skipped")
+p.write_text(s, encoding='utf-8')
+print("Added compact crafting-station layout.")
