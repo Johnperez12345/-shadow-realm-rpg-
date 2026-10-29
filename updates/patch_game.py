@@ -102,3 +102,44 @@ if sleep_before in s and 'sleepFx.classList.add' not in s:
 
 p.write_text(s, encoding='utf-8')
 print("Wildwood patch complete.")
+
+
+# Final mobile crafting layout and visible combat feedback.
+s = s.replace(
+    '.modalwrap{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#0b1712b0;padding:8px;z-index:20}',
+    '.modalwrap{position:absolute;inset:0;display:none;align-items:flex-end;justify-content:flex-start;background:#0b17127a;padding:8px;z-index:20;pointer-events:auto}'
+)
+s = s.replace(
+    '.modal{width:min(580px,100%);max-height:96%;display:flex;flex-direction:column;background:var(--panel);color:var(--ink);border:4px solid var(--wood);border-radius:10px;box-shadow:0 6px 0 #422d1f;text-shadow:none}',
+    '.modal{width:min(370px,42vw);max-height:78dvh;display:flex;flex-direction:column;background:var(--panel);color:var(--ink);border:3px solid var(--wood);border-radius:10px;box-shadow:0 4px 0 #422d1f;text-shadow:none}'
+)
+s = s.replace(
+    '#mclose{border:0;background:#8b613b;color:#fff;width:32px;height:30px;border-radius:6px;font-size:16px;font-weight:900}',
+    '#mclose{position:relative;display:flex!important;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:34px;border:2px solid #fff0c7!important;background:#a52d27!important;color:#fff!important;border-radius:7px;font-size:0!important;font-weight:1000;box-shadow:0 2px 0 #512a20;z-index:30}#mclose:before{content:"×";display:block;color:#fff;font-size:30px;line-height:26px;font-family:Arial,sans-serif;text-shadow:0 1px 2px #35100d}'
+)
+s = s.replace(
+    '.mhead{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-bottom:2px solid #d8c49a}',
+    '.mhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;border-bottom:2px solid #d8c49a;min-height:40px;flex-shrink:0}'
+)
+s = s.replace(
+    '#mbody{overflow:auto;padding:8px 10px 10px;font-size:12px;-webkit-overflow-scrolling:touch;touch-action:pan-y}',
+    '#mbody{overflow:auto;min-height:0;padding:6px 7px 8px;font-size:11px;-webkit-overflow-scrolling:touch;touch-action:pan-y}'
+)
+# Keep detail visible and size the crafting list for the smaller side panel.
+s = s.replace('.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}',
+              '.rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}')
+s = s.replace('.rcp{', '.rcp{font-size:10px;min-width:0;')
+s = s.replace('.recipe-detail{margin-top:10px;', '.recipe-detail{margin-top:6px;')
+# On portrait phones, use a compact panel near the left/bottom edge instead of a centered full-screen modal.
+if '@media (orientation:portrait)' not in s:
+    s = s.replace('</style>',
+        '@media (orientation:portrait){.modalwrap{align-items:flex-end;justify-content:flex-start;padding:6px}.modal{width:min(88vw,370px);max-height:68dvh}.rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.mhead h2{font-size:15px}}@media (max-height:420px){.modal{max-height:72dvh;width:min(350px,40vw)}}\n</style>', 1)
+# Make the arm/tool swing last a little longer and use a wider arc.
+s = s.replace('swingT = .25;', 'swingT = .34;')
+s = s.replace('const k=swingT>0?swingT/.25:0; ctx.rotate((P.fx<0?1:-1)*(k*1.8-.3));',
+              'const k=swingT>0?swingT/.34:0; ctx.rotate((P.fx<0?1:-1)*(k*2.35-.48));')
+# Stronger hit feedback so the player can see when an attack lands.
+s = s.replace("burst(m.x,m.y,m.t==='hollow'?'#6a5a8a':'#b03030',5,50);",
+              "burst(m.x,m.y,m.t==='hollow'?'#6a5a8a':'#b03030',9,72); shake=Math.max(shake,2.5);")
+p.write_text(s, encoding='utf-8')
+print("Applied compact edge-anchored crafting UI, visible close icon, and stronger swing/hit feedback.")
