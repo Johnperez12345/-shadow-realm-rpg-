@@ -71,6 +71,45 @@ else:
 
 s=s.replace('.rcp.off{opacity:.55;filter:saturate(.4)}',
             '.rcp.off{opacity:.75;filter:saturate(.4)}\n.recipe-detail{margin-top:10px;padding:9px;background:#efe0bb;border:2px solid #b69663;border-radius:8px;color:#34452c}.ingredients{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:5px}.ingredient{display:flex;align-items:center;justify-content:space-between;gap:5px;background:#fff6de;border:1px solid #c5a36a;border-radius:5px;padding:4px;font-size:11px;font-weight:800}.ingredient span{display:flex;align-items:center;gap:5px}.ingredient img{width:24px;height:24px;object-fit:contain;image-rendering:pixelated}.ingredient .no{color:#b8342c}')
+
+# Add copper and gold progression without replacing existing systems.
+item_anchor = """ armor_iron:{n:'Iron Armor',i:'',d:'Blocks 50% of damage.',armor:.5},"""
+item_extra = """ armor_iron:{n:'Iron Armor',i:'',d:'Blocks 50% of damage.',armor:.5},
+ copper_ore:{n:'Copper Ore',i:'',d:'A common metal ore found in rocky deposits.'},
+ copper:{n:'Copper Bar',i:'',d:'Smelted copper for sturdy tools and fittings.'},
+ gold_ore:{n:'Gold Ore',i:'',d:'Rare ore found near crystal-rich deposits.'},
+ gold:{n:'Gold Bar',i:'',d:'Rare refined gold for advanced gear.'},
+ axe_copper:{n:'Copper Axe',i:'',d:'A durable upgrade for chopping trees.',tool:{k:'axe',tier:3,pow:4,dur:180}},
+ pick_copper:{n:'Copper Pickaxe',i:'',d:'Mines iron and copper deposits efficiently.',tool:{k:'pick',tier:3,pow:4,dur:180}},
+ sword_copper:{n:'Copper Sword',i:'',d:'A balanced metal weapon.',tool:{k:'sword',tier:3,pow:8,dur:210}},
+ armor_copper:{n:'Copper Armor',i:'',d:'Blocks 35% of incoming damage.',armor:.35},
+ axe_gold:{n:'Gold Axe',i:'',d:'A high-tier axe with excellent durability.',tool:{k:'axe',tier:4,pow:6,dur:320}},
+ pick_gold:{n:'Gold Pickaxe',i:'',d:'A high-tier pickaxe for rare deposits.',tool:{k:'pick',tier:4,pow:6,dur:320}},
+ sword_gold:{n:'Gold Sword',i:'',d:'A powerful rare-metal sword.',tool:{k:'sword',tier:4,pow:13,dur:360}},
+ armor_gold:{n:'Gold Armor',i:'',d:'Blocks 60% of incoming damage.',armor:.6},"""
+if item_anchor in s:
+    s=s.replace(item_anchor,item_extra,1)
+else: print("WARNING: item anchor missing; copper/gold item definitions not added")
+recipe_anchor = """ {id:'sword_gem',st:'furnace',cost:{iron:3,gem:3}},"""
+recipe_extra = """ {id:'sword_gem',st:'furnace',cost:{iron:3,gem:3}},
+ {id:'copper',st:'furnace',cost:{copper_ore:2,coal:1}},
+ {id:'gold',st:'furnace',cost:{gold_ore:2,coal:2}},
+ {id:'axe_copper',st:'furnace',cost:{copper:3,wood:2}},
+ {id:'pick_copper',st:'furnace',cost:{copper:3,wood:2}},
+ {id:'sword_copper',st:'furnace',cost:{copper:4,wood:1}},
+ {id:'armor_copper',st:'furnace',cost:{copper:7,leather:2}},
+ {id:'axe_gold',st:'furnace',cost:{gold:4,wood:2}},
+ {id:'pick_gold',st:'furnace',cost:{gold:4,wood:2}},
+ {id:'sword_gold',st:'furnace',cost:{gold:5,wood:1}},
+ {id:'armor_gold',st:'furnace',cost:{gold:8,leather:2}},"""
+if recipe_anchor in s:
+    s=s.replace(recipe_anchor,recipe_extra,1)
+else: print("WARNING: recipe anchor missing; metal recipes not added")
+# Existing natural resource nodes now have rare copper/gold drops so new materials are obtainable.
+s=s.replace("drops:[['stone',3,4],['coal',1,1,.15]]}", "drops:[['stone',3,4],['coal',1,1,.15],['copper_ore',1,2,.22]]}",1)
+s=s.replace("drops:[['iron_ore',2,3],['stone',1,2]]}", "drops:[['iron_ore',2,3],['stone',1,2],['copper_ore',1,2,.35]]}",1)
+s=s.replace("drops:[['gem',1,2],['stone',1,1]]}", "drops:[['gem',1,2],['stone',1,1],['gold_ore',1,1,.24]]}",1)
+
 p.write_text(s, encoding="utf-8")
 print("Wildwood HUD, crafting details, ingredient images, and louder sound patch applied.")
 
