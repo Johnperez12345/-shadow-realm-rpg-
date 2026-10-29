@@ -12,8 +12,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Extract Android project archive
+        run: |
+          if [ ! -f "settings.gradle" ] || [ ! -f "app/build.gradle" ]; then
+            ARCHIVE="$(find . -maxdepth 2 -type f -name 'wildwood_survival_github_apk_build*.zip' -print -quit)"
+            if [ -z "$ARCHIVE" ]; then
+              echo "Android project ZIP not found and Gradle files are missing."
+              exit 1
+            fi
+            unzip -o "$ARCHIVE" -d .
+          fi
+          test -f settings.gradle
+          test -f app/build.gradle
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -24,8 +37,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
       - name: Install Android SDK packages
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          sdkmanager --sdk_root="$ANDROID_HOME" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -33,7 +50,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build debug APK
-        run: gradle assembleDebug
+        run: gradle --no-daemon assembleDebug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
