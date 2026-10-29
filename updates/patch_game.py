@@ -356,3 +356,58 @@ else:
     print("WARNING: style tag not found for bottom crafting layout")
 p.write_text(s, encoding='utf-8')
 print("Moved crafting panel to bottom and kept ingredient counts readable.")
+
+
+# Definitive bottom-anchored crafting layout: prevent any earlier CSS overrides
+# from pulling the panel back to the top, and use a compact but readable height.
+bottom_final_css = r"""
+.modalwrap{
+ position:absolute!important;inset:0!important;display:none;align-items:flex-end!important;
+ justify-content:center!important;padding:8px 8px max(8px,env(safe-area-inset-bottom))!important;
+ box-sizing:border-box!important;
+}
+.modalwrap[style*="display: flex"],.modalwrap[style*="display:flex"]{
+ align-items:flex-end!important;justify-content:center!important;
+}
+.modal{
+ width:min(760px,94vw)!important;max-width:calc(100vw - 16px)!important;
+ max-height:64dvh!important;margin:0 auto 0!important;
+ border-radius:14px 14px 10px 10px!important;
+}
+.mhead{min-height:46px!important;padding:6px 10px!important;flex-shrink:0!important}
+.mhead h2{font-size:20px!important;line-height:1.15!important}
+#mbody{
+ max-height:calc(64dvh - 54px)!important;min-height:0!important;
+ overflow:auto!important;overscroll-behavior:contain!important;
+ padding:8px 10px max(10px,env(safe-area-inset-bottom))!important;
+}
+.rgrid{gap:6px!important;align-items:start!important}
+.recipe-detail{
+ position:static!important;top:auto!important;bottom:auto!important;
+ max-height:none!important;overflow:visible!important;margin:0!important;
+ padding:9px!important;box-sizing:border-box!important;
+}
+.ingredients{display:flex!important;flex-direction:column!important;gap:6px!important;width:100%!important}
+.ingredient{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ width:100%!important;min-width:0!important;box-sizing:border-box!important;
+ padding:7px 9px!important;font-size:13px!important;line-height:1.25!important;
+}
+.ingredient span{min-width:0!important;flex:1 1 auto!important;overflow-wrap:anywhere!important}
+.ingredient b{flex:0 0 auto!important;white-space:nowrap!important;font-size:13px!important}
+.recipe-detail button{min-height:44px!important;font-size:14px!important}
+@media (orientation:portrait){
+ .modal{width:94vw!important;max-height:62dvh!important}
+ #mbody{max-height:calc(62dvh - 54px)!important}
+ .rgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important}
+ .recipe-detail{grid-column:2!important;grid-row:1 / span 40!important}
+}
+@media (max-height:420px){
+ .modal{max-height:58dvh!important}
+ #mbody{max-height:calc(58dvh - 54px)!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', bottom_final_css + '\\n</style>', 1)
+p.write_text(s, encoding='utf-8')
+print("Forced crafting UI to bottom with a more compact height and readable ingredient counts.")
