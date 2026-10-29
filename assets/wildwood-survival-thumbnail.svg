@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#102b35"/><stop offset=".58" stop-color="#24533d"/><stop offset="1" stop-color="#0b201c"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#ffe9a0"/><stop offset=".5" stop-color="#e9a83d"/><stop offset="1" stop-color="#9a4a20"/></linearGradient>
+ <linearGradient id="blade" x2="1" y2="1"><stop stop-color="#baf9ff"/><stop offset=".5" stop-color="#42c5d5"/><stop offset="1" stop-color="#24728a"/></linearGradient>
+ <filter id="shadow"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<rect width="1200" height="630" fill="url(#sky)"/>
+<circle cx="930" cy="135" r="72" fill="#ffd982" opacity=".9"/>
+<circle cx="930" cy="135" r="94" fill="#ffd982" opacity=".15"/>
+<!-- distant mountains -->
+<path d="M0 340L130 200 230 315 360 155 500 335 650 210 770 340 930 180 1100 330 1200 245V630H0Z" fill="#193b35"/>
+<path d="M0 400L160 280 300 385 450 250 610 400 790 285 940 390 1080 275 1200 370V630H0Z" fill="#102c28"/>
+<!-- forest silhouettes -->
+<g fill="#071c19">
+ <path d="M0 480L60 310 120 480 95 480 150 350 205 480 170 480 225 330 280 480V630H0Z"/>
+ <path d="M820 500L875 320 930 500 905 500 960 360 1015 500 990 500 1055 300 1120 500 1090 500 1150 365 1200 500V630H820Z"/>
+</g>
+<!-- ground -->
+<path d="M0 520Q240 465 430 525T800 510T1200 500V630H0Z" fill="#234b2d"/>
+<path d="M0 568Q300 520 560 570T1200 550V630H0Z" fill="#122f20"/>
+<!-- blocky hero -->
+<g transform="translate(520 290)">
+ <ellipse cx="60" cy="250" rx="100" ry="22" fill="#061712" opacity=".6"/>
+ <rect x="10" y="120" width="105" height="105" rx="9" fill="#245e82" stroke="#102f44" stroke-width="8"/>
+ <rect x="25" y="142" width="75" height="28" fill="#3187a1"/>
+ <rect x="22" y="225" width="37" height="70" fill="#67432d" stroke="#34251c" stroke-width="6"/>
+ <rect x="72" y="225" width="37" height="70" fill="#67432d" stroke="#34251c" stroke-width="6"/>
+ <rect x="18" y="20" width="94" height="100" rx="8" fill="#c78a58" stroke="#553722" stroke-width="7"/>
+ <path d="M12 53V17H37V0H98V20H120V58H100V35H40V54Z" fill="#493020"/>
+ <rect x="31" y="61" width="20" height="17" fill="#e8faff"/><rect x="77" y="61" width="20" height="17" fill="#e8faff"/>
+ <rect x="37" y="66" width="10" height="12" fill="#2a9cb7"/><rect x="83" y="66" width="10" height="12" fill="#2a9cb7"/>
+ <path d="M52 94H79" stroke="#6c2e26" stroke-width="7" stroke-linecap="round"/>
+ <!-- sword -->
+ <path d="M140 160L228 40L245 52L170 180Z" fill="url(#blade)" stroke="#c4fbff" stroke-width="5"/>
+ <path d="M143 163L173 183" stroke="#9a632e" stroke-width="15" stroke-linecap="round"/>
+ <path d="M128 177L190 125" stroke="#dca653" stroke-width="12" stroke-linecap="round"/>
+</g>
+<!-- title board -->
+<path d="M90 65H1110L1080 235H120Z" fill="#4b2b1b" stroke="#a66b34" stroke-width="10"/>
+<path d="M115 80H1085L1060 215H140Z" fill="#172d22" stroke="#6f9a55" stroke-width="6"/>
+<text x="600" y="151" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="76" font-weight="900" letter-spacing="3" fill="#d5e9bd" stroke="#17301f" stroke-width="3" paint-order="stroke">WILDWOOD</text>
+<text x="600" y="215" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="58" font-weight="900" letter-spacing="8" fill="url(#gold)" stroke="#542b1a" stroke-width="5" paint-order="stroke">SURVIVAL</text>
+<text x="600" y="590" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="5" fill="#d4e9cb">EXPLORE • CRAFT • SURVIVE</text>
+</svg>
