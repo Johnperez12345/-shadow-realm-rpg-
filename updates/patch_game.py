@@ -502,3 +502,129 @@ if '</style>' in s:
     s = s.replace('</style>', crafting_only_bottom_sheet + '\\n</style>', 1)
 p.write_text(s, encoding='utf-8')
 print("Scoped compact bottom-sheet styling to crafting only; other dialogs remain centered.")
+
+
+# Adventurer's Pouch-inspired inventory theme. Keep the real game inventory/data
+# and actions; only restyle the existing inventory dialog (no fake demo items).
+pouch_inventory_css = r"""
+.modalwrap.pouch-theme{align-items:center!important;justify-content:center!important;padding:10px!important;background:rgba(9,8,5,.76)!important}
+.modalwrap.pouch-theme .modal{
+ width:min(680px,94vw)!important;max-width:calc(100vw - 16px)!important;
+ max-height:82dvh!important;overflow:hidden!important;
+ color:#fff5d8!important;background:#6a4a2c!important;
+ border:4px solid #3b2812!important;border-radius:10px!important;
+ box-shadow:inset 0 0 0 3px #8a6339,0 12px 34px #000b!important;
+}
+.modalwrap.pouch-theme .mhead{
+ background:linear-gradient(#7a5733,#5e4126)!important;
+ border-bottom:3px solid #3b2812!important;color:#f6c619!important;
+ min-height:48px!important;padding:7px 10px!important;
+}
+.modalwrap.pouch-theme .mhead h2,.modalwrap.pouch-theme .mhead b{
+ color:#f6c619!important;text-shadow:2px 2px 0 #3b2000!important;letter-spacing:.04em!important;
+}
+.modalwrap.pouch-theme #mclose{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:38px!important;min-width:38px!important;height:38px!important;flex:0 0 38px!important;
+ background:#b02a2a!important;color:#fff!important;border:3px solid #3b0d0d!important;
+ border-radius:5px!important;font-size:25px!important;line-height:1!important;
+}
+.modalwrap.pouch-theme #mbody{
+ max-height:calc(82dvh - 54px)!important;overflow:auto!important;
+ background:#c9a46a!important;color:#fff5d8!important;padding:9px!important;
+}
+.modalwrap.pouch-theme .igrid,
+.modalwrap.pouch-theme .invgrid,
+.modalwrap.pouch-theme .inv-grid,
+.modalwrap.pouch-theme .inventory-grid,
+.modalwrap.pouch-theme .itemgrid,
+.modalwrap.pouch-theme .item-grid{
+ display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ gap:clamp(4px,1.3vw,8px)!important;padding:8px!important;margin:0 0 9px!important;
+ background:#d1b07a!important;border:3px solid #8a6339!important;border-radius:5px!important;
+}
+.modalwrap.pouch-theme .slot,
+.modalwrap.pouch-theme .invslot,
+.modalwrap.pouch-theme .inv-slot,
+.modalwrap.pouch-theme .item-slot,
+.modalwrap.pouch-theme .invitem{
+ min-width:0!important;aspect-ratio:1!important;position:relative!important;
+ display:grid!important;place-items:center!important;
+ background:#2b2118!important;border:3px solid #777!important;border-radius:5px!important;
+ box-shadow:inset 0 0 0 2px #0006!important;padding:2px!important;
+}
+.modalwrap.pouch-theme .slot.sel,
+.modalwrap.pouch-theme .slot.selected,
+.modalwrap.pouch-theme .invslot.sel,
+.modalwrap.pouch-theme .inv-slot.selected,
+.modalwrap.pouch-theme .item-slot.selected{
+ outline:3px solid #fff!important;outline-offset:1px!important;border-color:#f6c619!important;
+}
+.modalwrap.pouch-theme .slot img,
+.modalwrap.pouch-theme .invslot img,
+.modalwrap.pouch-theme .inv-slot img,
+.modalwrap.pouch-theme .item-slot img,
+.modalwrap.pouch-theme .invitem img{width:70%!important;height:70%!important;object-fit:contain!important;image-rendering:pixelated!important}
+.modalwrap.pouch-theme .q,
+.modalwrap.pouch-theme .qty,
+.modalwrap.pouch-theme .count,
+.modalwrap.pouch-theme .stack{
+ position:absolute!important;right:3px!important;bottom:1px!important;
+ color:#fff!important;font-weight:900!important;text-shadow:1px 1px 2px #000!important;
+}
+.modalwrap.pouch-theme .det,
+.modalwrap.pouch-theme .item-detail,
+.modalwrap.pouch-theme .inv-detail,
+.modalwrap.pouch-theme .details{
+ margin:8px 0!important;background:#33261a!important;border:3px solid #6a4a2c!important;
+ border-radius:6px!important;padding:10px!important;color:#fff5d8!important;
+}
+.modalwrap.pouch-theme .det .lab,
+.modalwrap.pouch-theme .item-detail .lab{
+ color:#f6c619!important;background:#6a4a2c!important;
+}
+.modalwrap.pouch-theme button{touch-action:manipulation}
+@media(max-width:420px){
+ .modalwrap.pouch-theme .modal{width:96vw!important;max-height:80dvh!important}
+ .modalwrap.pouch-theme #mbody{max-height:calc(80dvh - 54px)!important;padding:7px!important}
+ .modalwrap.pouch-theme .igrid,.modalwrap.pouch-theme .invgrid,.modalwrap.pouch-theme .inv-grid,
+ .modalwrap.pouch-theme .inventory-grid,.modalwrap.pouch-theme .itemgrid,.modalwrap.pouch-theme .item-grid{gap:4px!important;padding:6px!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', pouch_inventory_css + '\\n</style>', 1)
+else:
+    print("WARNING: style tag not found; pouch inventory CSS skipped")
+
+pouch_inventory_script = r"""
+<script>
+(function(){
+  function themeInventory(){
+    const wrap=document.getElementById('modalwrap');
+    if(!wrap) return;
+    wrap.classList.remove('pouch-theme');
+    if(!wrap.offsetParent && getComputedStyle(wrap).display==='none') return;
+    const modal=wrap.querySelector('.modal');
+    const body=wrap.querySelector('#mbody');
+    if(!modal||!body) return;
+    const text=(modal.innerText||modal.textContent||'').toLowerCase();
+    const isCraft=!!modal.querySelector('.rgrid');
+    const isInventory=!isCraft && /inventory|backpack|adventurer.?s pouch|your bag|item details/.test(text);
+    if(isInventory) wrap.classList.add('pouch-theme');
+  }
+  const start=()=> {
+    const wrap=document.getElementById('modalwrap');
+    if(wrap){
+      new MutationObserver(()=>requestAnimationFrame(themeInventory))
+        .observe(wrap,{subtree:true,childList:true,attributes:true,characterData:true});
+      themeInventory();
+    }
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+})();
+</script>
+"""
+if '</body>' in s and 'function themeInventory()' not in s:
+    s=s.replace('</body>', pouch_inventory_script + '\\n</body>',1)
+p.write_text(s, encoding='utf-8')
+print("Applied Adventurer's Pouch visual theme to the existing game inventory without replacing inventory data.")
