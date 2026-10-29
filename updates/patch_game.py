@@ -641,7 +641,6 @@ pouch_inventory_script = r"""
   function themeInventory(){
     const wrap=document.getElementById('modalwrap');
     if(!wrap) return;
-    wrap.classList.remove('pouch-theme');
     if(!wrap.offsetParent && getComputedStyle(wrap).display==='none') return;
     const modal=wrap.querySelector('.modal');
     const body=wrap.querySelector('#mbody');
@@ -649,7 +648,10 @@ pouch_inventory_script = r"""
     const text=(modal.innerText||modal.textContent||'').toLowerCase();
     const isCraft=!!modal.querySelector('.rgrid');
     const isInventory=!isCraft && /inventory|backpack|adventurer.?s pouch|your bag|item details/.test(text);
-    if(isInventory) wrap.classList.add('pouch-theme');
+    // Toggle the theme only when its state changes. Removing and re-adding this
+    // class on every DOM mutation restarts the modal animation and resets scroll.
+    if(isInventory && !wrap.classList.contains('pouch-theme')) wrap.classList.add('pouch-theme');
+    else if(!isInventory && wrap.classList.contains('pouch-theme')) wrap.classList.remove('pouch-theme');
   }
   const start=()=> {
     const wrap=document.getElementById('modalwrap');
@@ -909,7 +911,7 @@ _map_old = s
 s, _ww_n = _map_re.subn(r'(\bWW\s*=\s*)160\b', r'\g<1>224', s, count=1)
 s, _wh_n = _map_re.subn(r'(\bWH\s*=\s*)160\b', r'\g<1>224', s, count=1)
 if _ww_n and _wh_n:
-    print("Map expansion applied: 224 x 224 tiles (49,? tiles total).")
+    print("Map expansion applied: 224 x 224 tiles (50,176 tiles total).")
 else:
     print(f"WARNING: map expansion anchors not found (WW={_ww_n}, WH={_wh_n}); world dimensions unchanged.")
 p.write_text(s, encoding="utf-8")
