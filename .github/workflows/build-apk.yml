@@ -33,6 +33,9 @@ jobs:
             fi
           fi
           test -f app/src/main/AndroidManifest.xml
+          if [ -f updates/patch_game.py ]; then
+            python3 updates/patch_game.py
+          fi
           # Java public class MainActivity must match the filename on Linux.
           if [ -f app/src/main/java/com/wildwood/survival/mainactivity.java ] && [ ! -f app/src/main/java/com/wildwood/survival/MainActivity.java ]; then
             mv app/src/main/java/com/wildwood/survival/mainactivity.java app/src/main/java/com/wildwood/survival/MainActivity.java
