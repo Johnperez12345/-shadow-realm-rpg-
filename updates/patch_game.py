@@ -235,3 +235,38 @@ else:
     print("NOTE: could not find style closing tag for edge layout patch")
 p.write_text(s, encoding='utf-8')
 print("Crafting requirements are now in the compact edge panel flow; close icon forced visible.")
+
+
+# Restore original-size centered crafting panel and add a sword icon overlay.
+restore_css = r"""
+.modalwrap{align-items:center!important;justify-content:center!important;padding:8px!important;background:rgba(7,17,11,.55)!important}
+.modal{width:min(580px,92vw)!important;max-width:calc(100vw - 16px)!important;max-height:88dvh!important;margin:auto!important;border-width:4px!important}
+.mhead{min-height:54px!important;flex-shrink:0!important;padding:8px 12px!important;gap:10px!important}
+.mhead h2{font-size:22px!important;margin:0!important}
+#mclose{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 42px!important;width:42px!important;min-width:42px!important;height:42px!important;padding:0!important;border:2px solid #fff0c7!important;border-radius:8px!important;background:#a52d27!important;color:#fff!important;font-size:0!important;position:relative!important;z-index:100!important}
+#mclose:after{content:"×"!important;display:block!important;color:#fff!important;font:1000 34px/30px Arial,sans-serif!important;text-shadow:0 1px 2px #35100d!important}
+#mbody{min-height:0!important;max-height:calc(88dvh - 62px)!important;overflow:auto!important;padding:10px 12px 12px!important;font-size:13px!important;overscroll-behavior:contain!important}
+.rgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.recipe-detail{position:static!important;inset:auto!important;width:auto!important;max-height:none!important;overflow:visible!important;margin:10px 0 0!important;padding:10px!important;box-shadow:none!important}
+.recipe-detail .detail{gap:10px!important}
+.recipe-detail .big img{width:42px!important;height:42px!important}
+.ingredients{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+.ingredient{padding:6px!important;font-size:12px!important}
+.ingredient img{width:28px!important;height:28px!important}
+.recipe-detail button{min-height:46px!important;padding:10px!important;font-size:14px!important}
+#attackIconOverlay{position:fixed;right:5.5%;bottom:8.5%;width:64px;height:64px;z-index:15;pointer-events:none;background:url("icons/sword.svg") center/contain no-repeat;image-rendering:pixelated;filter:drop-shadow(1px 2px 2px #17120d)}
+@media (orientation:portrait){.modal{width:min(92vw,580px)!important;max-height:86dvh!important}#mbody{max-height:calc(86dvh - 62px)!important}.rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#attackIconOverlay{right:5%;bottom:9%;width:56px;height:56px}}
+@media (max-height:420px){.modal{max-height:86dvh!important}#mbody{max-height:calc(86dvh - 62px)!important}#attackIconOverlay{width:44px;height:44px}}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', restore_css + '\n</style>', 1)
+else:
+    print("WARNING: style tag not found; crafting CSS not applied")
+if 'id="attackIconOverlay"' not in s:
+    if '<body' in s:
+        body_end = s.find('>', s.find('<body'))
+        s = s[:body_end+1] + '\n<div id="attackIconOverlay" aria-hidden="true"></div>\n' + s[body_end+1:]
+    else:
+        print("WARNING: body tag not found; attack icon overlay not inserted")
+p.write_text(s, encoding='utf-8')
+print("Restored centered crafting layout and added sword icon overlay.")
