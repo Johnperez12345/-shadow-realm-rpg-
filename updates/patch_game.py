@@ -754,3 +754,86 @@ else:
 p.write_text(s, encoding="utf-8")
 print("Reduced backpack and crafting dialogs to compact centered panels.")
 
+
+# Clean, unified backpack/crafting layout with lightweight motion and clearer recipe cards.
+clean_panels_css = r"""
+@keyframes wwPanelIn{from{opacity:0;transform:translateY(8px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes wwCardIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.modalwrap.pouch-theme .modal,
+.modalwrap:has(.rgrid) .modal{
+  width:min(340px,82vw)!important;
+  max-width:calc(100vw - 28px)!important;
+  max-height:64dvh!important;
+  display:flex!important;flex-direction:column!important;
+  border-radius:12px!important;
+  animation:wwPanelIn .18s ease-out both!important;
+  transform-origin:center center!important;
+}
+.modalwrap.pouch-theme #mbody,
+.modalwrap:has(.rgrid) #mbody{
+  flex:1 1 auto!important;min-height:0!important;
+  max-height:calc(64dvh - 46px)!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  scrollbar-width:thin!important;
+  padding:7px!important;
+}
+.modalwrap:has(.rgrid) .rgrid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:6px!important;
+}
+.modalwrap:has(.rgrid) .rcp{
+  min-width:0!important;min-height:52px!important;height:auto!important;
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:6px!important;padding:7px!important;box-sizing:border-box!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;text-align:left!important;
+  border-radius:8px!important;line-height:1.2!important;
+  animation:wwCardIn .16s ease-out both!important;
+  transition:transform .14s ease,filter .14s ease,background-color .14s ease!important;
+}
+.modalwrap:has(.rgrid) .rcp:active{transform:scale(.97)!important;filter:brightness(1.08)!important}
+.modalwrap:has(.rgrid) .recipe-detail{
+  grid-column:1/-1!important;grid-row:auto!important;
+  position:static!important;inset:auto!important;float:none!important;
+  width:100%!important;max-width:100%!important;max-height:none!important;
+  overflow:visible!important;box-sizing:border-box!important;
+  margin:6px 0 0!important;padding:9px!important;border-radius:9px!important;
+  display:block!important;
+}
+.modalwrap:has(.rgrid) .recipe-detail .big{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important}
+.modalwrap:has(.rgrid) .recipe-detail .big img{width:32px!important;height:32px!important;object-fit:contain!important;flex:0 0 32px!important}
+.modalwrap:has(.rgrid) .recipe-detail .txt{min-width:0!important;font-size:12px!important;line-height:1.3!important;overflow-wrap:anywhere!important}
+.modalwrap:has(.rgrid) .ingredients{display:flex!important;flex-direction:column!important;gap:4px!important;width:100%!important;margin:7px 0!important}
+.modalwrap:has(.rgrid) .ingredient{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;padding:6px 8px!important;border-radius:6px!important;font-size:12px!important;line-height:1.25!important}
+.modalwrap:has(.rgrid) .ingredient span{flex:1 1 auto!important;min-width:0!important;overflow-wrap:anywhere!important}
+.modalwrap:has(.rgrid) .ingredient b{flex:0 0 auto!important;white-space:nowrap!important}
+.modalwrap:has(.rgrid) .recipe-detail button{width:100%!important;min-height:42px!important;margin-top:5px!important;border-radius:8px!important;font-size:13px!important;transition:transform .14s ease,filter .14s ease!important}
+.modalwrap:has(.rgrid) .recipe-detail button:active{transform:scale(.98)!important;filter:brightness(1.08)!important}
+.modalwrap.pouch-theme .igrid,.modalwrap.pouch-theme .invgrid,.modalwrap.pouch-theme .inv-grid,
+.modalwrap.pouch-theme .inventory-grid,.modalwrap.pouch-theme .itemgrid,.modalwrap.pouch-theme .item-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important;padding:4px!important;
+}
+.modalwrap.pouch-theme .igrid>*,.modalwrap.pouch-theme .invgrid>*,.modalwrap.pouch-theme .inv-grid>*,
+.modalwrap.pouch-theme .inventory-grid>*,.modalwrap.pouch-theme .itemgrid>*,.modalwrap.pouch-theme .item-grid>*{
+  min-width:0!important;box-sizing:border-box!important;transition:transform .14s ease,filter .14s ease!important;
+}
+.modalwrap.pouch-theme .igrid>*:active,.modalwrap.pouch-theme .invgrid>*:active,.modalwrap.pouch-theme .inv-grid>*:active,
+.modalwrap.pouch-theme .inventory-grid>*:active,.modalwrap.pouch-theme .itemgrid>*:active,.modalwrap.pouch-theme .item-grid>*:active{transform:scale(.96)!important;filter:brightness(1.08)!important}
+.modalwrap.pouch-theme button,.modalwrap:has(.rgrid) button{touch-action:manipulation}
+@media(max-width:380px){
+ .modalwrap.pouch-theme .modal,.modalwrap:has(.rgrid) .modal{width:84vw!important;max-height:62dvh!important}
+ .modalwrap.pouch-theme #mbody,.modalwrap:has(.rgrid) #mbody{max-height:calc(62dvh - 44px)!important}
+ .modalwrap:has(.rgrid) .rcp{min-height:48px!important;padding:6px!important;font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .modalwrap.pouch-theme .modal,.modalwrap:has(.rgrid) .modal,.modalwrap:has(.rgrid) .rcp{animation:none!important;transition:none!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', clean_panels_css + '\\n</style>', 1)
+else:
+    print("WARNING: no style closing tag found for clean panel UI")
+p.write_text(s, encoding="utf-8")
+print("Applied clean compact backpack/crafting UI and lightweight animations.")
+
+
