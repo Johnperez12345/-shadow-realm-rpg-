@@ -708,3 +708,49 @@ else:
     print("WARNING: no style closing tag found for compact UI sizing")
 p.write_text(s, encoding='utf-8')
 print("Applied final compact centered UI sizing.")
+
+
+# Keep backpack and crafting dialogs compact like the main menu/map.
+small_panels_css = r"""
+.modalwrap.pouch-theme .modal,
+.modalwrap:has(.rgrid) .modal{
+  width:min(340px,82vw)!important;
+  max-width:calc(100vw - 28px)!important;
+  max-height:64dvh!important;
+  height:auto!important;
+  margin:auto!important;
+  overflow:hidden!important;
+}
+.modalwrap.pouch-theme #mbody,
+.modalwrap:has(.rgrid) #mbody{
+  max-height:calc(64dvh - 46px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  padding:6px!important;
+}
+.modalwrap.pouch-theme .igrid,
+.modalwrap.pouch-theme .invgrid,
+.modalwrap.pouch-theme .inv-grid,
+.modalwrap.pouch-theme .inventory-grid,
+.modalwrap.pouch-theme .itemgrid,
+.modalwrap.pouch-theme .item-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:4px!important;
+  padding:4px!important;
+}
+.modalwrap.pouch-theme .mhead,
+.modalwrap:has(.rgrid) .mhead{min-height:38px!important;padding:4px 7px!important}
+.modalwrap.pouch-theme .mhead h2,
+.modalwrap:has(.rgrid) .mhead h2{font-size:16px!important;line-height:1.15!important}
+@media(max-width:380px){
+ .modalwrap.pouch-theme .modal,.modalwrap:has(.rgrid) .modal{width:84vw!important;max-height:62dvh!important}
+ .modalwrap.pouch-theme #mbody,.modalwrap:has(.rgrid) #mbody{max-height:calc(62dvh - 44px)!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', small_panels_css + '\\n</style>', 1)
+else:
+    print("WARNING: no style closing tag found for small panel sizing")
+p.write_text(s, encoding="utf-8")
+print("Reduced backpack and crafting dialogs to compact centered panels.")
+
