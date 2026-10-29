@@ -36,6 +36,9 @@ jobs:
           if [ -f updates/patch_game.py ]; then
             python3 updates/patch_game.py
           fi
+          if [ -f updates/set_app_icon.py ]; then
+            python3 updates/set_app_icon.py
+          fi
           # Java public class MainActivity must match the filename on Linux.
           if [ -f app/src/main/java/com/wildwood/survival/mainactivity.java ] && [ ! -f app/src/main/java/com/wildwood/survival/MainActivity.java ]; then
             mv app/src/main/java/com/wildwood/survival/mainactivity.java app/src/main/java/com/wildwood/survival/MainActivity.java
