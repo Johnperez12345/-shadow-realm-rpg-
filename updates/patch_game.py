@@ -906,8 +906,8 @@ print("Applied clean compact backpack/crafting UI and lightweight animations.")
 # Existing save compatibility must be validated by the game's own save/load logic.
 import re as _map_re
 _map_old = s
-s, _ww_n = _map_re.subn(r'(\\bWW\\s*=\\s*)160\\b', r'\\g<1>224', s, count=1)
-s, _wh_n = _map_re.subn(r'(\\bWH\\s*=\\s*)160\\b', r'\\g<1>224', s, count=1)
+s, _ww_n = _map_re.subn(r'(\bWW\s*=\s*)160\b', r'\g<1>224', s, count=1)
+s, _wh_n = _map_re.subn(r'(\bWH\s*=\s*)160\b', r'\g<1>224', s, count=1)
 if _ww_n and _wh_n:
     print("Map expansion applied: 224 x 224 tiles (49,? tiles total).")
 else:
