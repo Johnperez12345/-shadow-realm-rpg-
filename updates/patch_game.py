@@ -899,3 +899,17 @@ p.write_text(s, encoding="utf-8")
 print("Applied clean compact backpack/crafting UI and lightweight animations.")
 
 
+
+
+# ===== MAP EXPANSION PASS =====
+# Expand the procedural world from 160x160 to 224x224 tiles.
+# Existing save compatibility must be validated by the game's own save/load logic.
+import re as _map_re
+_map_old = s
+s, _ww_n = _map_re.subn(r'(\\bWW\\s*=\\s*)160\\b', r'\\g<1>224', s, count=1)
+s, _wh_n = _map_re.subn(r'(\\bWH\\s*=\\s*)160\\b', r'\\g<1>224', s, count=1)
+if _ww_n and _wh_n:
+    print("Map expansion applied: 224 x 224 tiles (49,? tiles total).")
+else:
+    print(f"WARNING: map expansion anchors not found (WW={_ww_n}, WH={_wh_n}); world dimensions unchanged.")
+p.write_text(s, encoding="utf-8")
