@@ -1,52 +1,33 @@
 #!/usr/bin/env python3
-"""Generate Android launcher icons for Wildwood Survival and set manifest references."""
+"""Create a dependency-free Android vector launcher icon for Wildwood Survival."""
 from pathlib import Path
-import re, subprocess, sys
-
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
-    from PIL import Image, ImageDraw
+import re
 
 root = Path("app/src/main")
 manifest = root / "AndroidManifest.xml"
 if not manifest.exists():
     raise SystemExit("AndroidManifest.xml not found")
 
-# Create a polished, simple survival-game icon at every legacy launcher density.
-sizes = {
-    "mipmap-mdpi": 48,
-    "mipmap-hdpi": 72,
-    "mipmap-xhdpi": 96,
-    "mipmap-xxhdpi": 144,
-    "mipmap-xxxhdpi": 192,
-}
-def draw_icon(size):
-    im = Image.new("RGB", (size, size), "#17372b")
-    d = ImageDraw.Draw(im)
-    # rounded-square background
-    d.rounded_rectangle((1, 1, size-2, size-2), radius=int(size*.22), fill="#17372b", outline="#dca64a", width=max(1,size//32))
-    # sunset
-    d.ellipse((size*.56, size*.12, size*.84, size*.40), fill="#f4c35c")
-    # layered forest mountains
-    d.polygon([(0,size*.67),(size*.26,size*.29),(size*.48,size*.67)], fill="#3f8150")
-    d.polygon([(size*.22,size*.69),(size*.53,size*.22),(size*.88,size*.69)], fill="#275d3b")
-    d.polygon([(0,size*.73),(size*.34,size*.53),(size*.62,size*.75),(size,size*.48),(size,size),(0,size)], fill="#10251d")
-    # sword blade and handle
-    d.polygon([(size*.32,size*.76),(size*.62,size*.37),(size*.69,size*.43),(size*.40,size*.81)], fill="#b8f4f4", outline="#e9ffff")
-    d.line((size*.35,size*.72,size*.49,size*.81), fill="#d7a04a", width=max(2,size//11))
-    d.line((size*.27,size*.80,size*.43,size*.64), fill="#d7a04a", width=max(2,size//10))
-    # tiny leaf highlight
-    d.ellipse((size*.12,size*.17,size*.27,size*.27), fill="#83c65b")
-    return im
-
-for folder, size in sizes.items():
-    out = root / "res" / folder
-    out.mkdir(parents=True, exist_ok=True)
-    icon = draw_icon(size)
-    icon.save(out / "ic_launcher.png")
-    icon.save(out / "ic_launcher_round.png")
+drawable = root / "res" / "drawable"
+drawable.mkdir(parents=True, exist_ok=True)
+icon_xml = '''<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#17372B" android:pathData="M0,0h108v108h-108z"/>
+    <path android:fillColor="#DCA64A" android:pathData="M0,0h108v5h-108z M0,103h108v5h-108z M0,0h5v108h-5z M103,0h5v108h-5z"/>
+    <path android:fillColor="#F4C35C" android:pathData="M73,12a15,15 0,1 0,0.1 0z"/>
+    <path android:fillColor="#3F8150" android:pathData="M0,70 L27,29 L52,70 Z"/>
+    <path android:fillColor="#275D3B" android:pathData="M23,75 L57,23 L93,75 Z"/>
+    <path android:fillColor="#10251D" android:pathData="M0,77 L35,56 L66,78 L108,51 L108,108 L0,108 Z"/>
+    <path android:fillColor="#B8F4F4" android:strokeColor="#E9FFFF" android:strokeWidth="1.5" android:pathData="M31,78 L66,34 L73,40 L39,84 Z"/>
+    <path android:fillColor="#D7A04A" android:pathData="M31,75 L48,86 L43,92 L26,81 Z"/>
+    <path android:fillColor="#83C65B" android:pathData="M14,19 C20,11 29,15 29,22 C23,28 17,26 14,19 Z"/>
+</vector>
+'''
+(drawable / "ic_launcher.xml").write_text(icon_xml, encoding="utf-8")
 
 text = manifest.read_text(encoding="utf-8")
 app_match = re.search(r"<application\b[^>]*>", text, flags=re.S)
@@ -55,7 +36,7 @@ if not app_match:
 tag = app_match.group(0)
 tag = re.sub(r'\s+android:icon="[^"]*"', "", tag)
 tag = re.sub(r'\s+android:roundIcon="[^"]*"', "", tag)
-tag = tag[:-1] + '\n        android:icon="@mipmap/ic_launcher"\n        android:roundIcon="@mipmap/ic_launcher_round">'
+tag = tag[:-1] + '\n        android:icon="@drawable/ic_launcher"\n        android:roundIcon="@drawable/ic_launcher">'
 text = text[:app_match.start()] + tag + text[app_match.end():]
 manifest.write_text(text, encoding="utf-8")
-print("Wildwood Survival launcher icons generated and AndroidManifest.xml updated.")
+print("Wildwood Survival vector launcher icon generated; no external Python packages required.")
