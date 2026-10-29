@@ -660,28 +660,28 @@ p.write_text(s, encoding='utf-8')
 print("Added compact crafting-station layout.")
 
 
-// Final UI sizing pass: keep all game dialogs compact and centered on screen.
+# Final UI sizing pass: compact and center game dialogs.
 ui_size_css = r"""
-/* Universal dialog sizing: compact and centered, never pinned to the bottom */
+/* Compact, centered dialogs for phone screens */
 .modalwrap{
   align-items:center!important;
   justify-content:center!important;
-  padding:10px!important;
+  padding:8px!important;
   background:rgba(5,12,8,.48)!important;
 }
 .modal{
-  width:min(440px,88vw)!important;
-  max-width:calc(100vw - 20px)!important;
-  max-height:78dvh!important;
+  width:min(420px,88vw)!important;
+  max-width:calc(100vw - 16px)!important;
+  max-height:76dvh!important;
   margin:auto!important;
   border-width:3px!important;
   box-shadow:0 4px 0 #422d1f!important;
 }
-.mhead{min-height:42px!important;padding:6px 9px!important;gap:8px!important}
-.mhead h2{font-size:clamp(15px,2.5vw,19px)!important;line-height:1.15!important}
+.mhead{min-height:40px!important;padding:5px 8px!important;gap:7px!important}
+.mhead h2{font-size:clamp(15px,2.5vw,18px)!important;line-height:1.15!important}
 #mbody{
-  max-height:calc(78dvh - 50px)!important;
-  padding:7px 9px 9px!important;
+  max-height:calc(76dvh - 48px)!important;
+  padding:7px 8px 8px!important;
   font-size:12px!important;
   overflow:auto!important;
 }
@@ -692,22 +692,14 @@ ui_size_css = r"""
 .ingredient{padding:4px!important;font-size:10px!important}
 .ingredient img{width:22px!important;height:22px!important}
 .recipe-detail button{min-height:36px!important;padding:7px!important;font-size:12px!important}
-/* Other menu/map popups, if present in the game build */
-#menu .panel,#mainMenu .panel,#mapModal .panel,.menu-panel,.map-panel,.map-dialog{
-  width:min(440px,88vw)!important;
-  max-width:calc(100vw - 20px)!important;
-  max-height:78dvh!important;
-  margin:auto!important;
-  overflow:auto!important;
-}
 @media (orientation:portrait){
- .modal{width:min(88vw,440px)!important;max-height:78dvh!important}
- #mbody{max-height:calc(78dvh - 50px)!important}
+ .modal{width:min(88vw,420px)!important;max-height:76dvh!important}
+ #mbody{max-height:calc(76dvh - 48px)!important}
  .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
 @media (max-height:420px){
- .modal{width:min(420px,84vw)!important;max-height:78dvh!important}
- #mbody{max-height:calc(78dvh - 50px)!important}
+ .modal{width:min(400px,84vw)!important;max-height:76dvh!important}
+ #mbody{max-height:calc(76dvh - 48px)!important}
 }
 """
 if '</style>' in s:
@@ -715,4 +707,4 @@ if '</style>' in s:
 else:
     print("WARNING: no style closing tag found for compact UI sizing")
 p.write_text(s, encoding='utf-8')
-print("Applied final compact centered UI sizing.");
+print("Applied final compact centered UI sizing.")
