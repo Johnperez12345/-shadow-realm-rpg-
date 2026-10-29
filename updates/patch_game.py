@@ -833,6 +833,29 @@ if '</style>' in s:
     s = s.replace('</style>', clean_panels_css + '\\n</style>', 1)
 else:
     print("WARNING: no style closing tag found for clean panel UI")
+
+# Crafting station visibility: hand recipes stay separate from workbench recipes.
+old_tabs = """let h=`<div class="tabs">${['all','hand','workbench','furnace','cook'].map(t=>`<button class="tab ${craftTab===t?'on':''}" data-tab="${t}">${t==='all'?' All':STATION_NAME[t]}</button>`).join('')}</div>`;"""
+new_tabs = """const craftTabs=['hand',...(near.workbench?['workbench']:[]),...(near.furnace?['furnace']:[]),...(near.cook?['cook']:[])];
+  if(!craftTabs.includes(craftTab)) craftTab=near.workbench?'workbench':near.furnace?'furnace':near.cook?'cook':'hand';
+  let h=`<div class="tabs">${craftTabs.map(t=>`<button class="tab ${craftTab===t?'on':''}" data-tab="${t}">${t==='hand'?'Hand Crafting':STATION_NAME[t]}</button>`).join('')}</div>`;"""
+if old_tabs in s:
+    s=s.replace(old_tabs,new_tabs,1)
+else:
+    print("WARNING: crafting tab source pattern not found; station tabs not changed")
+old_filter = """const list=RECIPES.map((r,i)=>({r,i})).filter(({r})=>craftTab==='all'||(r.st||'hand')===craftTab).map(o=>({...o,ok:canCraft(o.r,near)})).sort((a,b)=>b.ok-a.ok);"""
+new_filter = """const list=RECIPES.map((r,i)=>({r,i})).filter(({r})=>(r.st||'hand')===craftTab).map(o=>({...o,ok:canCraft(o.r,near)})).sort((a,b)=>b.ok-a.ok);"""
+if old_filter in s:
+    s=s.replace(old_filter,new_filter,1)
+else:
+    print("WARNING: recipe filter source pattern not found")
+old_close = """function closeModal(){ if(modal==='death') return; selectedRecipe=null; modal=null;"""
+new_close = """function closeModal(){ if(modal==='death') return; selectedRecipe=null; craftTab='all'; modal=null;"""
+if old_close in s:
+    s=s.replace(old_close,new_close,1)
+else:
+    print("WARNING: closeModal reset pattern not found")
+
 p.write_text(s, encoding="utf-8")
 print("Applied clean compact backpack/crafting UI and lightweight animations.")
 
