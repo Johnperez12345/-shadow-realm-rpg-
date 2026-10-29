@@ -74,46 +74,31 @@ s=s.replace('.rcp.off{opacity:.55;filter:saturate(.4)}',
 p.write_text(s, encoding="utf-8")
 print("Wildwood HUD, crafting details, ingredient images, and louder sound patch applied.")
 
-# Extra mobile UI polish: keep crafting details visible, make close button obvious,
-# and show a short bed/sleep animation when sleeping succeeds.
-extra = r"""
-s=s.replace('#mclose{border:0;background:#8b613b;color:#fff;width:32px;height:30px;border-radius:6px;font-size:16px;font-weight:900}',
-'''#mclose{display:flex;align-items:center;justify-content:center;flex:0 0 38px;min-width:38px;height:38px;border:2px solid #f5dfad;background:#8b352d;color:#fff;width:38px;border-radius:8px;font-size:28px;line-height:1;font-weight:1000;box-shadow:0 2px 0 #512a20;z-index:5}''')
-s=s.replace('.modal{width:min(580px,100%);max-height:96%;',
-            '.modal{width:min(580px,100%);max-height:88dvh;')
-s=s.replace('#mbody{overflow:auto;padding:8px 10px 10px;font-size:12px;',
-            '#mbody{overflow:auto;overscroll-behavior:contain;padding:8px 10px 10px;font-size:12px;')
-s=s.replace('.recipe-detail{margin-top:10px;',
-            '.recipe-detail{position:sticky;bottom:0;z-index:3;margin-top:10px;')
-s=s.replace('title.textContent=\' Crafting\';',
-            'title.textContent=\' Crafting\';\n $(\'mclose\').textContent=\'×\';')
-s=s.replace('function closeModal(){ if(modal===\'death\') return; modal=null;',
-            'function closeModal(){ if(modal===\'death\') return; selectedRecipe=null; modal=null;')
-# Ensure the detail panel is scrolled into view after a recipe is selected.
-s=s.replace("selectedRecipe=+b.dataset.r; sfx('open'); renderModal(); return;",
-            "selectedRecipe=+b.dataset.r; sfx('open'); renderModal(); requestAnimationFrame(()=>document.querySelector('.recipe-detail')?.scrollIntoView({behavior:'smooth',block:'nearest'})); return;")
-# Insert sleep overlay once, then trigger it only after sleep validation succeeds.
+# Mobile UI polish: larger close control, scrollable recipe panel, and sleep overlay.
+s = s.replace(
+    '#mclose{border:0;background:#8b613b;color:#fff;width:32px;height:30px;border-radius:6px;font-size:16px;font-weight:900}',
+    '#mclose{display:flex;align-items:center;justify-content:center;flex:0 0 38px;min-width:38px;height:38px;border:2px solid #f5dfad;background:#8b352d;color:#fff;border-radius:8px;font-size:28px;line-height:1;font-weight:1000;box-shadow:0 2px 0 #512a20;z-index:5}'
+)
+s = s.replace('.modal{width:min(580px,100%);max-height:96%;',
+              '.modal{width:min(580px,100%);max-height:88dvh;')
+s = s.replace('#mbody{overflow:auto;padding:8px 10px 10px;font-size:12px;',
+              '#mbody{overflow:auto;overscroll-behavior:contain;padding:8px 10px 10px;font-size:12px;')
+s = s.replace('.recipe-detail{margin-top:10px;',
+              '.recipe-detail{position:sticky;bottom:0;z-index:3;margin-top:10px;')
+s = s.replace("function closeModal(){ if(modal==='death') return; modal=null;",
+              "function closeModal(){ if(modal==='death') return; selectedRecipe=null; modal=null;")
+s = s.replace("selectedRecipe=+b.dataset.r; sfx('open'); renderModal(); return;",
+              "selectedRecipe=+b.dataset.r; sfx('open'); renderModal(); requestAnimationFrame(()=>document.querySelector('.recipe-detail')?.scrollIntoView({behavior:'smooth',block:'nearest'})); return;")
+
 if 'id="sleepFx"' not in s:
-    s=s.replace('<div class="modalwrap" id="modalwrap">',
-'''<div id="sleepFx" aria-hidden="true"><div class="sleep-card"><div class="sleep-bed">🛏️</div><div class="sleep-person">●━━━━</div><b>Sleeping...</b><div class="sleep-stars">✦　⋆　✦</div></div></div>
-<div class="modalwrap" id="modalwrap">''',1)
-    s=s.replace('</style>',
-'''#sleepFx{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#071326b8;z-index:30;pointer-events:none}
-#sleepFx.show{display:flex;animation:nightFade 1.6s ease-in-out forwards}
-.sleep-card{position:relative;text-align:center;padding:20px 28px;border:3px solid #d9bd7b;border-radius:12px;background:#213047;color:#fff2c7;box-shadow:0 6px 0 #111b2a;min-width:190px}
-.sleep-bed{font-size:44px;animation:bedRock .65s ease-in-out infinite alternate}
-.sleep-person{font-size:22px;letter-spacing:1px;animation:lieDown .65s ease-in-out forwards}
-.sleep-stars{font-size:18px;color:#ffe28a;animation:starsTwinkle .6s infinite alternate}
-@keyframes lieDown{from{transform:rotate(-25deg) translateY(-5px)}to{transform:rotate(0) translateY(3px)}}
-@keyframes bedRock{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
-@keyframes starsTwinkle{from{opacity:.35;transform:translateY(2px)}to{opacity:1;transform:translateY(-3px)}}
-@keyframes nightFade{0%{opacity:0}12%{opacity:1}75%{opacity:1}100%{opacity:0}}
-</style>''',1)
-sleep_before = "if (S.time>.06) S.day++;"
-sleep_after = """const sleepFx=document.getElementById('sleepFx'); if(sleepFx){sleepFx.classList.remove('show'); void sleepFx.offsetWidth; sleepFx.classList.add('show'); setTimeout(()=>sleepFx.classList.remove('show'),1650);}
- if (S.time>.06) S.day++;"""
+    s = s.replace('<div class="modalwrap" id="modalwrap">',
+        '<div id="sleepFx" aria-hidden="true"><div class="sleep-card"><div class="sleep-bed">🛏️</div><div class="sleep-person">●━━━━</div><b>Sleeping...</b><div class="sleep-stars">✦ ⋆ ✦</div></div></div><div class="modalwrap" id="modalwrap">', 1)
+    sleep_css = '#sleepFx{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#071326b8;z-index:30;pointer-events:none}#sleepFx.show{display:flex;animation:nightFade 1.6s ease-in-out forwards}.sleep-card{position:relative;text-align:center;padding:20px 28px;border:3px solid #d9bd7b;border-radius:12px;background:#213047;color:#fff2c7;box-shadow:0 6px 0 #111b2a;min-width:190px}.sleep-bed{font-size:44px;animation:bedRock .65s ease-in-out infinite alternate}.sleep-person{font-size:22px;letter-spacing:1px;animation:lieDown .65s ease-in-out forwards}.sleep-stars{font-size:18px;color:#ffe28a;animation:starsTwinkle .6s infinite alternate}@keyframes lieDown{from{transform:rotate(-25deg) translateY(-5px)}to{transform:rotate(0) translateY(3px)}}@keyframes bedRock{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}@keyframes starsTwinkle{from{opacity:.35;transform:translateY(2px)}to{opacity:1;transform:translateY(-3px)}}@keyframes nightFade{0%{opacity:0}12%{opacity:1}75%{opacity:1}100%{opacity:0}}'
+    s = s.replace('</style>', sleep_css + '</style>', 1)
+sleep_before = 'if (S.time>.06) S.day++;'
+sleep_after = "const sleepFx=document.getElementById('sleepFx');if(sleepFx){sleepFx.classList.remove('show');void sleepFx.offsetWidth;sleepFx.classList.add('show');setTimeout(()=>sleepFx.classList.remove('show'),1650);} if (S.time>.06) S.day++;"
 if sleep_before in s and 'sleepFx.classList.add' not in s:
-    s=s.replace(sleep_before,sleep_after,1)
+    s = s.replace(sleep_before, sleep_after, 1)
+
 p.write_text(s, encoding='utf-8')
-"""
-exec(extra)
+print("Wildwood patch complete.")
