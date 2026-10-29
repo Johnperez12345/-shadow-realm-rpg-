@@ -411,3 +411,94 @@ if '</style>' in s:
     s = s.replace('</style>', bottom_final_css + '\\n</style>', 1)
 p.write_text(s, encoding='utf-8')
 print("Forced crafting UI to bottom with a more compact height and readable ingredient counts.")
+
+
+# Scope the bottom-sheet layout ONLY to the crafting modal (identified by its
+# recipe grid). All other dialogs keep their normal centered placement.
+crafting_only_bottom_sheet = r"""
+/* Reset generic dialogs so inventory, sleep, death, and settings are unaffected. */
+.modalwrap{
+ position:absolute!important;inset:0!important;
+ align-items:center!important;justify-content:center!important;
+ padding:8px!important;box-sizing:border-box!important;
+ background:#07130eb0!important;
+}
+/* Only the crafting modal slides up from the bottom when the recipe grid exists. */
+.modalwrap:has(.rgrid){
+ align-items:flex-end!important;justify-content:center!important;
+ padding:8px 8px max(8px,env(safe-area-inset-bottom))!important;
+ background:linear-gradient(180deg,rgba(4,12,8,.05),rgba(4,12,8,.48))!important;
+}
+.modalwrap:has(.rgrid) .modal{
+ width:min(720px,94vw)!important;max-width:calc(100vw - 16px)!important;
+ height:auto!important;max-height:46dvh!important;min-height:0!important;
+ margin:0 auto!important;overflow:hidden!important;
+ border:3px solid #d0ae70!important;border-radius:16px 16px 10px 10px!important;
+ box-shadow:0 5px 0 #503522,0 12px 30px #07100b88!important;
+ animation:craftSheetIn .18s ease-out both!important;
+}
+.modalwrap:has(.rgrid) .mhead{
+ min-height:44px!important;padding:6px 10px!important;
+ background:linear-gradient(135deg,#fff3d0,#f0d9a8)!important;
+ border-bottom:2px solid #d2b77f!important;
+}
+.modalwrap:has(.rgrid) .mhead h2{font-size:19px!important;line-height:1.1!important;letter-spacing:.2px!important}
+.modalwrap:has(.rgrid) #mclose{
+ width:36px!important;min-width:36px!important;height:36px!important;flex-basis:36px!important;
+ border-radius:10px!important;background:#a52d27!important;border:2px solid #ffe7b0!important;
+ font-size:0!important;box-shadow:0 2px 0 #572a20!important;
+}
+.modalwrap:has(.rgrid) #mclose:after{content:"×"!important;font:1000 29px/28px Arial,sans-serif!important;color:#fff!important}
+.modalwrap:has(.rgrid) #mbody{
+ max-height:calc(46dvh - 50px)!important;min-height:0!important;
+ overflow:auto!important;padding:8px 9px max(10px,env(safe-area-inset-bottom))!important;
+ font-size:12px!important;overscroll-behavior:contain!important;
+}
+.modalwrap:has(.rgrid) .rgrid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:6px!important;align-items:start!important;
+}
+.modalwrap:has(.rgrid) .rcp{
+ min-width:0!important;padding:6px!important;border-radius:8px!important;
+ font-size:11px!important;line-height:1.2!important;
+}
+.modalwrap:has(.rgrid) .recipe-detail{
+ grid-column:1 / -1!important;grid-row:auto!important;
+ position:static!important;inset:auto!important;min-width:0!important;width:100%!important;
+ max-height:none!important;overflow:visible!important;margin:2px 0 0!important;padding:9px!important;
+ border:2px solid #b99a62!important;border-radius:11px!important;
+ background:linear-gradient(135deg,#f8e9c5,#efdbad)!important;
+ box-sizing:border-box!important;
+}
+.modalwrap:has(.rgrid) .recipe-detail .detail{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important}
+.modalwrap:has(.rgrid) .recipe-detail .big img{width:36px!important;height:36px!important;object-fit:contain!important}
+.modalwrap:has(.rgrid) .recipe-detail .txt{font-size:13px!important;line-height:1.25!important;min-width:0!important;overflow-wrap:anywhere!important}
+.modalwrap:has(.rgrid) .recipe-detail .sec{font-size:11px!important;letter-spacing:.7px!important;margin:7px 0 5px!important}
+.modalwrap:has(.rgrid) .ingredients{display:flex!important;flex-direction:column!important;gap:4px!important;width:100%!important;min-width:0!important}
+.modalwrap:has(.rgrid) .ingredient{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:7px!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;
+ padding:5px 7px!important;border-radius:7px!important;font-size:12px!important;line-height:1.2!important;
+}
+.modalwrap:has(.rgrid) .ingredient span{display:flex!important;align-items:center!important;gap:6px!important;flex:1 1 auto!important;min-width:0!important;overflow-wrap:anywhere!important}
+.modalwrap:has(.rgrid) .ingredient img,.modalwrap:has(.rgrid) .ingredient span img{width:24px!important;height:24px!important;flex:0 0 24px!important;object-fit:contain!important}
+.modalwrap:has(.rgrid) .ingredient b{flex:0 0 auto!important;white-space:nowrap!important;font-size:12px!important;margin-left:auto!important}
+.modalwrap:has(.rgrid) .recipe-detail button{min-height:40px!important;padding:7px 9px!important;font-size:13px!important;line-height:1.2!important}
+@keyframes craftSheetIn{from{transform:translateY(16px);opacity:.7}to{transform:translateY(0);opacity:1}}
+@media (orientation:portrait){
+ .modalwrap:has(.rgrid) .modal{width:94vw!important;max-height:48dvh!important}
+ .modalwrap:has(.rgrid) #mbody{max-height:calc(48dvh - 50px)!important}
+ .modalwrap:has(.rgrid) .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .modalwrap:has(.rgrid) .recipe-detail{grid-column:1 / -1!important;grid-row:auto!important}
+}
+@media (max-height:420px){
+ .modalwrap:has(.rgrid) .modal{max-height:52dvh!important}
+ .modalwrap:has(.rgrid) #mbody{max-height:calc(52dvh - 50px)!important}
+ .modalwrap:has(.rgrid) .mhead{min-height:38px!important}
+ .modalwrap:has(.rgrid) #mclose{width:30px!important;min-width:30px!important;height:30px!important;flex-basis:30px!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', crafting_only_bottom_sheet + '\\n</style>', 1)
+p.write_text(s, encoding='utf-8')
+print("Scoped compact bottom-sheet styling to crafting only; other dialogs remain centered.")
