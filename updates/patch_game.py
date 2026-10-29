@@ -312,3 +312,47 @@ else:
     print("WARNING: could not append readable crafting CSS")
 p.write_text(s, encoding='utf-8')
 print("Fixed clipped ingredient counts, expanded crafting panel, and refined sword icon.")
+
+
+# Put the crafting UI at the bottom of the screen as requested, with a large,
+# readable panel that respects the phone's safe area.
+bottom_crafting_css = r"""
+.modalwrap{
+  align-items:flex-end!important;
+  justify-content:center!important;
+  padding:8px 8px max(8px,env(safe-area-inset-bottom))!important;
+}
+.modal{
+  width:min(760px,94vw)!important;
+  max-width:calc(100vw - 16px)!important;
+  max-height:76dvh!important;
+  margin:0 auto!important;
+  border-radius:16px 16px 12px 12px!important;
+}
+.mhead{min-height:52px!important;padding:7px 12px!important}
+.mhead h2{font-size:22px!important}
+#mbody{max-height:calc(76dvh - 60px)!important;padding:10px 12px max(12px,env(safe-area-inset-bottom))!important}
+.rgrid{align-items:start!important}
+.recipe-detail{max-height:none!important;overflow:visible!important}
+.ingredients{display:flex!important;flex-direction:column!important;gap:7px!important}
+.ingredient{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;min-width:0!important;width:100%!important;box-sizing:border-box!important;padding:8px 10px!important;font-size:14px!important;line-height:1.3!important}
+.ingredient span{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex:1 1 auto!important;overflow-wrap:anywhere!important}
+.ingredient b{flex:0 0 auto!important;white-space:nowrap!important;font-size:14px!important;margin-left:auto!important}
+.recipe-detail button{min-height:48px!important;font-size:14px!important}
+@media (orientation:portrait){
+ .modal{width:94vw!important;max-height:72dvh!important}
+ #mbody{max-height:calc(72dvh - 60px)!important}
+ .rgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)!important}
+ .recipe-detail{grid-column:2!important;grid-row:1 / span 30!important}
+}
+@media (max-height:420px){
+ .modal{max-height:70dvh!important}
+ #mbody{max-height:calc(70dvh - 60px)!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', bottom_crafting_css + '\\n</style>', 1)
+else:
+    print("WARNING: style tag not found for bottom crafting layout")
+p.write_text(s, encoding='utf-8')
+print("Moved crafting panel to bottom and kept ingredient counts readable.")
