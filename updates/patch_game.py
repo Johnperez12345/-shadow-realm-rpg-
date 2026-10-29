@@ -143,3 +143,95 @@ s = s.replace("burst(m.x,m.y,m.t==='hollow'?'#6a5a8a':'#b03030',5,50);",
               "burst(m.x,m.y,m.t==='hollow'?'#6a5a8a':'#b03030',9,72); shake=Math.max(shake,2.5);")
 p.write_text(s, encoding='utf-8')
 print("Applied compact edge-anchored crafting UI, visible close icon, and stronger swing/hit feedback.")
+
+
+# User-requested correction: keep the recipe requirements attached to the edge panel,
+# never as a centered/sticky overlay, and force a visible close glyph.
+mobile_edge_css = r"""
+.modalwrap{
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  padding:8px!important;
+  background:rgba(7,17,11,.38)!important;
+}
+.modal{
+  width:min(350px,42vw)!important;
+  max-width:calc(100vw - 16px)!important;
+  max-height:78dvh!important;
+  margin:0!important;
+}
+.mhead{
+  min-height:44px!important;
+  flex-shrink:0!important;
+  padding:5px 8px!important;
+  gap:8px!important;
+}
+.mhead h2{font-size:18px!important;margin:0!important}
+#mclose{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 34px!important;
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  padding:0!important;
+  border:2px solid #fff0c7!important;
+  border-radius:7px!important;
+  background:#a52d27!important;
+  color:#fff!important;
+  font-size:0!important;
+  line-height:1!important;
+  position:relative!important;
+  z-index:100!important;
+}
+#mclose::before,#mclose::after{content:none!important;display:none!important}
+#mclose{font-size:0!important}
+#mclose:after{
+  content:"×"!important;
+  display:block!important;
+  color:#fff!important;
+  font:1000 30px/26px Arial,sans-serif!important;
+  text-shadow:0 1px 2px #35100d!important;
+}
+#mbody{
+  min-height:0!important;
+  max-height:calc(78dvh - 52px)!important;
+  overflow:auto!important;
+  padding:6px 7px 8px!important;
+  font-size:11px!important;
+  overscroll-behavior:contain!important;
+}
+.rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important}
+.recipe-detail{
+  position:static!important;
+  inset:auto!important;
+  width:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:8px 0 0!important;
+  padding:7px!important;
+  box-shadow:none!important;
+}
+.recipe-detail .detail{gap:6px!important}
+.recipe-detail .big img{width:30px!important;height:30px!important}
+.ingredients{grid-template-columns:1fr!important;gap:4px!important}
+.ingredient{padding:4px!important;font-size:10px!important}
+.ingredient img{width:20px!important;height:20px!important}
+.recipe-detail button{min-height:36px!important;padding:7px!important;font-size:11px!important}
+@media (orientation:portrait){
+  .modalwrap{align-items:flex-start!important;justify-content:flex-start!important}
+  .modal{width:min(88vw,350px)!important;max-height:66dvh!important}
+  #mbody{max-height:calc(66dvh - 52px)!important}
+}
+@media (max-height:420px){
+  .modal{max-height:72dvh!important;width:min(320px,40vw)!important}
+  #mbody{max-height:calc(72dvh - 52px)!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', mobile_edge_css + '\\n</style>', 1)
+else:
+    print("NOTE: could not find style closing tag for edge layout patch")
+p.write_text(s, encoding='utf-8')
+print("Crafting requirements are now in the compact edge panel flow; close icon forced visible.")
