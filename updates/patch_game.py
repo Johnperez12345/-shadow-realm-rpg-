@@ -270,3 +270,45 @@ if 'id="attackIconOverlay"' not in s:
         print("WARNING: body tag not found; attack icon overlay not inserted")
 p.write_text(s, encoding='utf-8')
 print("Restored centered crafting layout and added sword icon overlay.")
+
+
+# Final crafting layout fix: make the selected recipe panel span the available
+# right-side columns and keep ingredient names/counts on one readable line.
+readable_crafting_css = r"""
+.modal{width:min(760px,94vw)!important;max-width:calc(100vw - 16px)!important;max-height:90dvh!important}
+#mbody{max-height:calc(90dvh - 62px)!important;padding:12px 14px 14px!important;font-size:14px!important}
+.rgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:start!important;gap:8px!important}
+.recipe-detail{grid-column:2 / -1!important;grid-row:1 / span 20!important;min-width:0!important;width:100%!important;box-sizing:border-box!important;margin:0!important;padding:12px!important;overflow:visible!important}
+.recipe-detail .detail{display:flex!important;align-items:center!important;gap:12px!important;min-width:0!important}
+.recipe-detail .txt{min-width:0!important;font-size:15px!important;line-height:1.35!important;overflow-wrap:anywhere!important}
+.recipe-detail .big img{width:48px!important;height:48px!important;object-fit:contain!important}
+.recipe-detail .sec{font-size:14px!important;letter-spacing:.8px!important;margin:12px 0 7px!important}
+.ingredients{display:flex!important;flex-direction:column!important;gap:7px!important;width:100%!important;min-width:0!important}
+.ingredient{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;padding:8px 10px!important;font-size:14px!important;line-height:1.25!important;white-space:normal!important}
+.ingredient span{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex:1 1 auto!important;overflow-wrap:anywhere!important}
+.ingredient span img{width:30px!important;height:30px!important;flex:0 0 30px!important;object-fit:contain!important}
+.ingredient b{flex:0 0 auto!important;white-space:nowrap!important;font-size:14px!important;line-height:1.2!important;margin-left:auto!important}
+.recipe-detail button{min-height:50px!important;font-size:15px!important;white-space:normal!important;line-height:1.25!important}
+#attackIconOverlay{position:fixed!important;right:6.1%!important;bottom:11%!important;width:58px!important;height:58px!important;background:url("icons/sword.svg") center/78% 78% no-repeat!important;transform:rotate(-8deg)!important;filter:drop-shadow(2px 2px 1px #17120d)!important;pointer-events:none!important}
+@media (orientation:portrait){
+ .modal{width:94vw!important;max-height:88dvh!important}
+ #mbody{max-height:calc(88dvh - 62px)!important}
+ .rgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)!important}
+ .recipe-detail{grid-column:2!important;grid-row:1 / span 30!important}
+ .rcp{font-size:12px!important;padding:6px!important}
+ .ingredient{padding:7px 8px!important;font-size:13px!important}
+ .ingredient b{font-size:13px!important}
+ #attackIconOverlay{right:6.5%!important;bottom:11%!important;width:54px!important;height:54px!important}
+}
+@media (max-height:420px){
+ .modal{max-height:88dvh!important}
+ #mbody{max-height:calc(88dvh - 62px)!important}
+ .recipe-detail .big img{width:38px!important;height:38px!important}
+}
+"""
+if '</style>' in s:
+    s = s.replace('</style>', readable_crafting_css + '\\n</style>', 1)
+else:
+    print("WARNING: could not append readable crafting CSS")
+p.write_text(s, encoding='utf-8')
+print("Fixed clipped ingredient counts, expanded crafting panel, and refined sword icon.")
