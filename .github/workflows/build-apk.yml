@@ -36,18 +36,6 @@ jobs:
           if [ -f updates/patch_game.py ]; then
             python3 updates/patch_game.py
           fi
-          python3 - <<'PY'
-          import re
-          p="app/src/main/assets/index.html"
-          s=open(p,encoding="utf-8").read()
-          print("=== CRAFT SOURCE INSPECTION ===")
-          for pattern in [r"(?:const|let|var) ITEMS\s*=",r"(?:const|let|var) RECIPES\s*=",r"(?:const|let|var) STATION_NAME\s*=",r"function nearStations\s*\(",r"function renderModal\s*\("]:
-              m=re.search(pattern,s)
-              if m:
-                  a=max(0,m.start()-100); b=min(len(s),m.start()+5000)
-                  print("\n---",pattern,"---\n",s[a:b])
-          print("=== END CRAFT SOURCE INSPECTION ===")
-          PY
           # Java public class MainActivity must match the filename on Linux.
           if [ -f app/src/main/java/com/wildwood/survival/mainactivity.java ] && [ ! -f app/src/main/java/com/wildwood/survival/MainActivity.java ]; then
             mv app/src/main/java/com/wildwood/survival/mainactivity.java app/src/main/java/com/wildwood/survival/MainActivity.java
