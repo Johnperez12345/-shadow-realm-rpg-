@@ -947,3 +947,72 @@ if "{id:'wood_plank',cost:" not in s:
         print("WARNING: extra recipe anchor missing")
 p.write_text(s, encoding="utf-8")
 print("Applied extra survival crafting items and recipes.")
+
+
+# ===== UNIQUE CRAFT RECIPE ART PASS =====
+# Give every recipe card its own generated thumbnail (no shared/duplicate recipe icon).
+# This is local SVG artwork, so it works offline in the Android WebView.
+unique_recipe_art = r"""
+<script id="uniqueRecipeArtPatch">
+(function(){
+  if(window.__uniqueRecipeArtPatch) return;
+  window.__uniqueRecipeArtPatch = true;
+  const glyphs = {
+    wood_plank:'▤', stone_brick:'▦', rope:'〰', glass:'◇', bread:'♨', cooked_meat:'♨',
+    wood:'♣', stone:'◆', fiber:'≋', seed:'✳', herb:'✚', mushroom:'☂',
+    axe:'⚒', axe_copper:'⚒', axe_gold:'⚒', pick:'⛏', pick_copper:'⛏', pick_gold:'⛏',
+    sword:'⚔', sword_copper:'⚔', sword_gold:'⚔', armor_wood:'⬟', armor_copper:'⬟',
+    armor_iron:'⬟', armor_gold:'⬟', copper:'●', gold:'●', copper_ore:'◈', gold_ore:'◈',
+    iron_ore:'◈', gem:'✦', torch:'♨', campfire:'♨', wall:'▥', stone_wall:'▦',
+    fence:'╫', door:'▯', chest:'▣', bed:'▰', furnace:'♨', workbench:'⚒',
+    bow:'⌁', arrow:'➤', bandage:'✚', potion:'⚗'
+  };
+  const colors = ['#8c5b32','#587b42','#65758e','#b46a38','#3e8e9b','#a65e8e','#c19a35','#6e64a5','#49744f','#b64e43','#4383c5','#8a754e'];
+  function art(id){
+    id = String(id || 'craft');
+    let hash=0; for(let i=0;i<id.length;i++) hash=(hash*31+id.charCodeAt(i))>>>0;
+    const bg=colors[hash%colors.length], fg='#fff4ce', symbol=glyphs[id]||id.replace(/[^a-z]/gi,'').slice(0,2).toUpperCase()||'✦';
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="3" y="3" width="58" height="58" rx="11" fill="'+bg+'" stroke="#382b22" stroke-width="4"/><path d="M10 46 L24 19 L36 37 L46 25 L56 46 Z" fill="#ffffff" opacity=".14"/><circle cx="32" cy="30" r="18" fill="#1b241e" opacity=".24"/><text x="32" y="39" font-size="'+(symbol.length>2?'19':'27')+'" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" fill="'+fg+'">'+symbol+'</text><path d="M13 52 H51" stroke="#fff4ce" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>';
+    return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+  }
+  function paint(){
+    document.querySelectorAll('.rcp[data-r]').forEach(function(card){
+      const index=Number(card.dataset.r), recipe=window.RECIPES && window.RECIPES[index];
+      if(!recipe) return;
+      const id=recipe.id, url=art(id);
+      let img=card.querySelector('img');
+      if(!img){
+        img=document.createElement('img');
+        img.alt=(window.ITEMS && window.ITEMS[id] && window.ITEMS[id].n) || id;
+        img.className='unique-recipe-art';
+        card.insertBefore(img,card.firstChild);
+      }
+      if(img.dataset.uniqueRecipeArt!=='1'){
+        img.src=url; img.dataset.uniqueRecipeArt='1';
+        img.style.cssText='width:42px;height:42px;object-fit:contain;image-rendering:pixelated;flex:0 0 42px;border-radius:7px;';
+      }
+    });
+    const detail=document.querySelector('.recipe-detail .big');
+    if(detail && window.selectedRecipe!==undefined && window.RECIPES){
+      const recipe=window.RECIPES[window.selectedRecipe];
+      if(recipe){
+        let img=detail.querySelector('img');
+        if(!img){img=document.createElement('img');detail.replaceChildren(img);}
+        img.src=art(recipe.id); img.alt=recipe.id;
+        img.style.cssText='width:48px;height:48px;object-fit:contain;image-rendering:pixelated;';
+      }
+    }
+  }
+  const observer=new MutationObserver(paint);
+  function start(){paint();observer.observe(document.body,{childList:true,subtree:true});}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+"""
+if 'id="uniqueRecipeArtPatch"' not in s:
+    if '</body>' in s:
+        s = s.replace('</body>', unique_recipe_art + '\\n</body>', 1)
+    else:
+        print("WARNING: no body closing tag; unique recipe art not inserted")
+p.write_text(s, encoding="utf-8")
+print("Added unique offline SVG thumbnails for crafting recipes.")
