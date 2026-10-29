@@ -36,6 +36,7 @@ jobs:
           fi
           test -f app/src/main/AndroidManifest.xml
           if [ -f updates/patch_game.py ]; then python3 updates/patch_game.py; fi
+          if [ -f updates/set_app_icon.py ]; then python3 updates/set_app_icon.py; fi
           if [ -f app/src/main/java/com/wildwood/survival/mainactivity.java ] && [ ! -f app/src/main/java/com/wildwood/survival/MainActivity.java ]; then
             mv app/src/main/java/com/wildwood/survival/mainactivity.java app/src/main/java/com/wildwood/survival/MainActivity.java
           fi
