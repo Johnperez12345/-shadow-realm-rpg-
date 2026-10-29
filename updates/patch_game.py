@@ -585,8 +585,8 @@ pouch_inventory_css = r"""
 }
 .modalwrap.pouch-theme button{touch-action:manipulation}
 @media(max-width:420px){
- .modalwrap.pouch-theme .modal{width:96vw!important;max-height:80dvh!important}
- .modalwrap.pouch-theme #mbody{max-height:calc(80dvh - 54px)!important;padding:7px!important}
+ .modalwrap.pouch-theme .modal{width:min(420px,88vw)!important;max-width:calc(100vw - 16px)!important;max-height:76dvh!important}
+ .modalwrap.pouch-theme #mbody{max-height:calc(76dvh - 48px)!important;padding:7px!important}
  .modalwrap.pouch-theme .igrid,.modalwrap.pouch-theme .invgrid,.modalwrap.pouch-theme .inv-grid,
  .modalwrap.pouch-theme .inventory-grid,.modalwrap.pouch-theme .itemgrid,.modalwrap.pouch-theme .item-grid{gap:4px!important;padding:6px!important}
 }
@@ -632,13 +632,13 @@ print("Applied Adventurer's Pouch visual theme to the existing game inventory wi
 
 # Compact bottom-sheet crafting layout; keep backpack styling unchanged.
 compact_craft_css = r"""
-.modalwrap:has(.rgrid){align-items:flex-end!important;justify-content:center!important;padding:6px!important}
-.modalwrap:has(.rgrid) .modal{width:min(650px,95vw)!important;max-height:56dvh!important;height:auto!important;margin:0 auto!important;overflow:hidden!important;border-radius:13px 13px 8px 8px!important}
+.modalwrap:has(.rgrid){align-items:center!important;justify-content:center!important;padding:8px!important}
+.modalwrap:has(.rgrid) .modal{width:min(420px,88vw)!important;max-width:calc(100vw - 16px)!important;max-height:76dvh!important;height:auto!important;margin:auto!important;overflow:hidden!important;border-radius:13px!important}
 .modalwrap:has(.rgrid) .mhead{min-height:42px!important;padding:5px 9px!important}
 .modalwrap:has(.rgrid) .mhead h2{font-size:clamp(16px,4.4vw,20px)!important;line-height:1.15!important}
 .modalwrap:has(.rgrid) #mclose{width:34px!important;min-width:34px!important;height:34px!important;flex:0 0 34px!important;font-size:0!important}
 .modalwrap:has(.rgrid) #mclose:after{content:"×"!important;font:900 28px/28px Arial,sans-serif!important}
-.modalwrap:has(.rgrid) #mbody{max-height:calc(56dvh - 46px)!important;overflow:auto!important;padding:7px!important}
+.modalwrap:has(.rgrid) #mbody{max-height:calc(76dvh - 48px)!important;overflow:auto!important;padding:7px!important}
 .modalwrap:has(.rgrid) .rgrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
 .modalwrap:has(.rgrid) .rcp{min-width:0!important;padding:5px!important;font-size:11px!important;line-height:1.2!important}
 .modalwrap:has(.rgrid) .recipe-detail{grid-column:1/-1!important;grid-row:auto!important;position:static!important;inset:auto!important;width:100%!important;max-height:none!important;overflow:visible!important;margin:2px 0 0!important;padding:8px!important;box-sizing:border-box!important}
@@ -649,8 +649,8 @@ compact_craft_css = r"""
 .modalwrap:has(.rgrid) .ingredient span{min-width:0!important;flex:1 1 auto!important;overflow-wrap:anywhere!important}
 .modalwrap:has(.rgrid) .ingredient b{flex:0 0 auto!important;white-space:nowrap!important;font-size:12px!important}
 .modalwrap:has(.rgrid) .recipe-detail button{min-height:39px!important;padding:6px 8px!important;font-size:13px!important}
-@media(max-width:430px){.modalwrap:has(.rgrid) .modal{max-height:53dvh!important}.modalwrap:has(.rgrid) #mbody{max-height:calc(53dvh - 46px)!important}.modalwrap:has(.rgrid) .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.modalwrap:has(.rgrid) .recipe-detail{grid-column:1/-1!important;grid-row:auto!important}}
-@media(max-height:430px){.modalwrap:has(.rgrid) .modal{max-height:68dvh!important}.modalwrap:has(.rgrid) #mbody{max-height:calc(68dvh - 46px)!important}}
+@media(max-width:430px){.modalwrap:has(.rgrid) .modal{width:min(420px,88vw)!important;max-height:76dvh!important}.modalwrap:has(.rgrid) #mbody{max-height:calc(76dvh - 48px)!important}.modalwrap:has(.rgrid) .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.modalwrap:has(.rgrid) .recipe-detail{grid-column:1/-1!important;grid-row:auto!important}}
+@media(max-height:430px){.modalwrap:has(.rgrid) .modal{max-height:76dvh!important}.modalwrap:has(.rgrid) #mbody{max-height:calc(76dvh - 48px)!important}}
 """
 if '</style>' in s:
     s = s.replace('</style>', compact_craft_css + '\\n</style>', 1)
