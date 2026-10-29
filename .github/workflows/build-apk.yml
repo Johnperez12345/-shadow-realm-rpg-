@@ -27,6 +27,12 @@ jobs:
           fi
           test -f settings.gradle
           test -f app/build.gradle
+          if [ ! -f app/src/main/AndroidManifest.xml ]; then
+            if [ -f app/src/main/androidmanifest.xml ]; then
+              mv app/src/main/androidmanifest.xml app/src/main/AndroidManifest.xml
+            fi
+          fi
+          test -f app/src/main/AndroidManifest.xml
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
