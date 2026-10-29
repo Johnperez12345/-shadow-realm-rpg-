@@ -915,3 +915,35 @@ if _ww_n and _wh_n:
 else:
     print(f"WARNING: map expansion anchors not found (WW={_ww_n}, WH={_wh_n}); world dimensions unchanged.")
 p.write_text(s, encoding="utf-8")
+
+
+# ===== EXPEDITION CONTENT PASS =====
+# Add additional craftable survival materials through the existing item/recipe patch anchors.
+item_anchor2 = """ armor_gold:{n:'Gold Armor',i:'',d:'Blocks 60% of incoming damage.',armor:.6},"""
+item_extra2 = """ armor_gold:{n:'Gold Armor',i:'',d:'Blocks 60% of incoming damage.',armor:.6},
+ wood_plank:{n:'Wood Planks',i:'',d:'Processed timber for construction.'},
+ stone_brick:{n:'Stone Bricks',i:'',d:'Durable cut stone for building.'},
+ rope:{n:'Rope',i:'',d:'Twisted fiber for survival equipment.'},
+ glass:{n:'Glass',i:'',d:'Smelted panels for building.'},
+ bread:{n:'Bread',i:'',d:'A filling farm-grown food.'},
+ cooked_meat:{n:'Cooked Meat',i:'',d:'A cooked meal for your journey.'},"""
+if "wood_plank:{n:'Wood Planks'" not in s:
+    if item_anchor2 in s:
+        s = s.replace(item_anchor2, item_extra2, 1)
+    else:
+        print("WARNING: extra item anchor missing")
+recipe_anchor2 = """ {id:'armor_gold',st:'furnace',cost:{gold:8,leather:2}},"""
+recipe_extra2 = """ {id:'armor_gold',st:'furnace',cost:{gold:8,leather:2}},
+ {id:'wood_plank',cost:{wood:2},n:4},
+ {id:'stone_brick',cost:{stone:4},n:4},
+ {id:'rope',cost:{fiber:3},n:1},
+ {id:'glass',st:'furnace',cost:{sand:2,coal:1},n:2},
+ {id:'bread',st:'cook',cost:{seed:3},n:1},
+ {id:'cooked_meat',st:'cook',cost:{raw_meat:1},n:1},"""
+if "{id:'wood_plank',cost:" not in s:
+    if recipe_anchor2 in s:
+        s = s.replace(recipe_anchor2, recipe_extra2, 1)
+    else:
+        print("WARNING: extra recipe anchor missing")
+p.write_text(s, encoding="utf-8")
+print("Applied extra survival crafting items and recipes.")
